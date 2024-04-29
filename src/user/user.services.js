@@ -24,7 +24,7 @@ module.exports ={
             let query = `select * from UserMaster where UserName=@LoginName`
             const request =model.db.request();
             request.input('LoginName',data.LoginName)
-
+            console.log(data)
             const result =await request.query(query);
             // console.log(result.recordset[0]);
             return callback(null,result.recordset[0]);
