@@ -11,7 +11,7 @@ router.post('/timeUpload', upload.array('photos', 10), async (req, res) => {
         const times = Array.isArray(req.body.time) ? req.body.time : [req.body.time];
         const longitudes = Array.isArray(req.body.longitude) ? req.body.longitude : [req.body.longitude];
         const latitudes = Array.isArray(req.body.latitude) ? req.body.latitude : [req.body.latitude];
-        const dateStringArray = times.map(time => moment.unix(time/1000).tz('Asia/Singapore').format('YYYY-MM-DD HH:mm:ss.SSS'));
+        const dateStringArray = times.map(time => moment.unix(time).tz('Asia/Singapore').format('YYYY-MM-DD HH:mm:ss.SSS'));
         const longitudeArray = longitudes.map(longitude => longitude);
         const latitudeArray = latitudes.map(latitude => latitude);
         // console.log("time",dateStringArray)

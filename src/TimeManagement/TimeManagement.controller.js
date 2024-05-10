@@ -1,4 +1,4 @@
-const { createTimeSheetManagement, getPhotoTypeId, getProjectTypeMaster, createLogTimeSheetManageent, getbyId } = require('./TimeManagement.services')
+const { createTimeSheetManagement, getPhotoTypeId, getProjectTypeMaster, createLogTimeSheetManageent, getbyId, createLogTimeSheetManagement } = require('./TimeManagement.services')
 module.exports = {
     createTimeSheetManagement: (req, res) => {
         const body = req.body
@@ -58,7 +58,7 @@ module.exports = {
     },
     createLogTimeSheetManagement: (req, res) => {
         const body = req.body
-        createLogTimeSheetManageent(body, (err, result) => {
+        createLogTimeSheetManagement(body, (err, result) => {
             if (err) {
                 // console.log(err)
                 return res.status(500).json({
