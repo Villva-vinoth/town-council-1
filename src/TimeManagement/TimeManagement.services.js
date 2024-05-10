@@ -1277,7 +1277,7 @@ module.exports = {
                 else {
                   // console.log("project exists")
                   if (photoTypeId === 3) {
-                    console.log("location change");
+                    // console.log("location change");
                     // console.log("location change can enable");
 
                     // ---> changed to unique id --- master removed
