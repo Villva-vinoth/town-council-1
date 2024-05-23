@@ -39,11 +39,12 @@ module.exports = {
 
                 if (compare) {
                     const token = generateToken({ LoginName: body.LoginName });
+                    // console.log(result.Userid)
                     return res.status(200).json({
                         success: 1,
                         message: "login Successfull",
                         token: token,
-                        user_id:result.UserRole,
+                        user_id:result.Userid,
                         name : result.UserName,
                         AdminID :result.AdminID,
                     })

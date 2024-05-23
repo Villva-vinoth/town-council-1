@@ -801,41 +801,43 @@ module.exports = {
       const dateTime = data.image[0].dateTime
       const createBy = data.user_id
       const workerid = data.user_id
+
       let startTimelength = 0
       let EndTimeLength = 0
 
-
+      console.log(worker_id, projectTypeId, projectName, photoTypeId, path, latitude, longitude, dateTime)
 
       let query = `SELECT * FROM TimeManagement tm 
               JOIN TimesheetMaster ts ON tm.TimeSheetID = ts.TimeSheetID 
-              WHERE ts.WorkersId = @workersid 
-              AND CONVERT(DATE, tm.EntryTime) = CONVERT(DATE, dateadd(hh,8,GETUTCDATE())) or CONVERT(DATE, tm.EntryTime) = CONVERT(DATE, dateadd(hh,8,GETUTCDATE()+1));`;
+              WHERE ts.userId = @workersid 
+              AND CONVERT(DATE, tm.EntryTime) = CONVERT(DATE, dateadd(hh,8,GETUTCDATE())) 
+              or CONVERT(DATE, tm.EntryTime) = CONVERT(DATE, dateadd(hh,8,GETUTCDATE()+1));`;
 
       request.input('workersid', sql.Int, worker_id);
       let response = await request.query(query);
 
-      // console.log("check data present or not ", response.recordset)
+      console.log("check data present or not ", response.recordset,worker_id)
 
       if (response.recordset && response.recordset.length > 0) {
-        // console.log("record Found!")
+        console.log("record Found!")
 
 
         const dateObject = new Date(dateTime.replace(' ', 'T'));
 
         const currentHour = dateObject.getHours();
 
-        // console.log(dateTime, currentHour)
+        console.log(dateTime, currentHour)
 
         if (currentHour >= 8 && currentHour < 20) {
 
 
-          // console.log("8 to 8 pm", worker_id);
+          console.log("8 to 8 pm", worker_id);
 
           query = `SELECT ts.ProjectTypeId
           FROM dbo.TimeManagement tm
           JOIN dbo.TimesheetMaster ts ON tm.TimeSheetID = ts.TimeSheetID
           WHERE  CONVERT(DATE, tm.EntryTime) = CONVERT(DATE, dateadd(hh,8,GETUTCDATE()))
-          AND  DatePART(HOUR,tm.EntryTime)BETWEEN 8 AND 20 and PhotoTypeId=1 and ts.WorkersId =${worker_id}`
+          AND  DatePART(HOUR,tm.EntryTime)BETWEEN 8 AND 20 and PhotoTypeId=1 and ts.userId =${worker_id}`
 
 
           response = await request.query(query);
@@ -857,7 +859,7 @@ module.exports = {
             query = `SELECT ts.ProjectTypeId
             FROM dbo.TimeManagement tm
             JOIN dbo.TimesheetMaster ts ON tm.TimeSheetID = ts.TimeSheetID
-            WHERE PhotoTypeId=2 and ts.WorkersId =${worker_id} 
+            WHERE PhotoTypeId=2 and ts.userId =${worker_id} 
             and CONVERT(DATE, tm.EntryTime) = CONVERT(DATE,dateadd(hh,8,GETUTCDATE()))
             AND  DatePART(HOUR,tm.EntryTime)BETWEEN 8 AND 20`
 
@@ -872,7 +874,7 @@ module.exports = {
                 console.log("even condition start time insert ")
 
                 if (photoTypeId === 1) {
-                  query = `insert into TimesheetMaster(WorkersId,ProjectTypeId,CreateBy) values (
+                  query = `insert into TimesheetMaster(userId,ProjectTypeId,CreateBy) values (
                       @workers_id,@projectTypeId,@createBy
                   )`;
                   request
@@ -882,7 +884,7 @@ module.exports = {
 
                   await request.query(query);
 
-                  query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where workersid =${worker_id}`;
+                  query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where userId =${worker_id}`;
                   let response = await request.query(query);
                   // console.log(response.recordset);
                   const TimeSheetId = await response.recordset[0].TimeSheetId
@@ -931,7 +933,7 @@ module.exports = {
 
                     //   await request.query(query);
 
-                    query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where workersid =${workerid}`;
+                    query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where userId =${workerid}`;
                     let response = await request.query(query);
                     //  console.log(response.recordset);
                     const TimeSheetId = await response.recordset[0].TimeSheetId
@@ -964,7 +966,7 @@ module.exports = {
 
                     //   await request.query(query);
 
-                    query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where workersid = ${worker_id}`;
+                    query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where userId = ${worker_id}`;
                     let response = await request.query(query);
                     //  console.log(response.recordset);
                     const TimeSheetId = await response.recordset[0].TimeSheetId
@@ -1013,7 +1015,7 @@ module.exports = {
 
                   //   await request.query(query);
 
-                  query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where workersid=${worker_id}`;
+                  query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where userId=${worker_id}`;
                   let response = await request.query(query);
                   // console.log(response.recordset);
                   const TimeSheetId = await response.recordset[0].TimeSheetId
@@ -1047,7 +1049,7 @@ module.exports = {
 
                   //   await request.query(query);
 
-                  query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where workersid=${worker_id}`;
+                  query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where userId=${worker_id}`;
                   let response = await request.query(query);
                   // console.log(response.recordset);
                   const TimeSheetId = await response.recordset[0].TimeSheetId
@@ -1080,7 +1082,7 @@ module.exports = {
             // console.log("no start time Exists")
             // console.log(" No Record ! if ph 1 insert")
             if (photoTypeId === 1) {
-              query = `insert into TimesheetMaster(WorkersId,ProjectTypeId,CreateBy) values (
+              query = `insert into TimesheetMaster(userId,ProjectTypeId,CreateBy) values (
                 @workers_id,@projectTypeId,@createBy
             )`;
               request
@@ -1090,7 +1092,7 @@ module.exports = {
 
               await request.query(query);
 
-              query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where workersid=${worker_id}`;
+              query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where userId=${worker_id}`;
               let response = await request.query(query);
               //   console.log(response.recordset);
               const TimeSheetId = await response.recordset[0].TimeSheetId
@@ -1120,7 +1122,7 @@ module.exports = {
 
         }
         else {
-          // console.log("8 to 8 am", worker_id);
+          console.log("8 to 8 am", worker_id);
 
 
           // query = `SELECT ts.ProjectTypeId 
@@ -1142,28 +1144,28 @@ module.exports = {
           SELECT ts.ProjectTypeId 
           FROM dbo.TimeManagement tm
           JOIN dbo.TimesheetMaster ts ON tm.TimeSheetID = ts.TimeSheetID
-          WHERE ts.WorkersId = ${worker_id}
+          WHERE ts.userId = ${worker_id} 
           AND tm.PhotoTypeId = 1
           AND (
               (CONVERT(DATE, tm.EntryTime) = CONVERT(DATE, DATEADD(HOUR, 8, GETUTCDATE())) AND DATEPART(HOUR, tm.EntryTime) BETWEEN 20 AND 23)
               OR 
-              (CONVERT(DATE, tm.EntryTime) = CONVERT(DATE, DATEADD(HOUR, 8, GETUTCDATE() + 1)) AND DATEPART(HOUR, tm.EntryTime) BETWEEN 0 AND 8)
-          )
+              (CONVERT(DATE, tm.EntryTime) = CONVERT(DATE, DATEADD(HOUR, 8, GETUTCDATE() )) AND DATEPART(HOUR, tm.EntryTime) BETWEEN 0 AND 8)
+          )  
           `
 
-          // console.log("check point one ----> or to and 5th line")
+          console.log("check point one ----> or to and 5th line")
 
           response = await request.query(query);
 
-          // console.log("Total prev and next record length", response.recordset.length);
+          console.log("Total prev and next record length", response.recordset.length);
 
 
           if (response.recordset && response.recordset.length > 0) {
 
             startTimelength = response.recordset.length
-            // console.log(startTimelength)
+            console.log(startTimelength)
 
-            // console.log("startime Exists", startTimelength)
+            console.log("startime Exists", startTimelength)
 
             // console.log("response project", response.recordset[startTimelength - 1].ProjectTypeId, projectTypeId)
             let projecttypeid = response.recordset[startTimelength - 1].ProjectTypeId;  // project id 
@@ -1201,16 +1203,16 @@ module.exports = {
             SELECT ts.ProjectTypeId 
             FROM dbo.TimeManagement tm
             JOIN dbo.TimesheetMaster ts ON tm.TimeSheetID = ts.TimeSheetID
-            WHERE ts.WorkersId = ${worker_id}
+            WHERE ts.userId = ${worker_id}
             AND tm.PhotoTypeId = 2
             AND (
             (CONVERT(DATE, tm.EntryTime) = CONVERT(DATE, DATEADD(HOUR, 8, GETUTCDATE())) AND DATEPART(HOUR, tm.EntryTime) BETWEEN 20 AND 23)
             OR 
-            (CONVERT(DATE, tm.EntryTime) = CONVERT(DATE, DATEADD(HOUR, 8, GETUTCDATE() + 1)) AND DATEPART(HOUR, tm.EntryTime) BETWEEN 0 AND 8)
+            (CONVERT(DATE, tm.EntryTime) = CONVERT(DATE, DATEADD(HOUR, 8, GETUTCDATE() )) AND DATEPART(HOUR, tm.EntryTime) BETWEEN 0 AND 8)
             )
             `
 
-            // console.log("check point one -----> or to and")
+            console.log("check point one -----> or to and")
 
 
             response = await request.query(query);
@@ -1231,7 +1233,7 @@ module.exports = {
               if (startTimelength === EndTimeLength) {
                 // console.log("even condition start time insert ")
                 if (photoTypeId === 1) {
-                  query = `insert into TimesheetMaster(WorkersId,ProjectTypeId,CreateBy) values (
+                  query = `insert into TimesheetMaster(userId,ProjectTypeId,CreateBy) values (
                       @workers_id,@projectTypeId,@createBy
                   )`;
                   request
@@ -1241,7 +1243,7 @@ module.exports = {
 
                   await request.query(query);
 
-                  query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where workersid=${worker_id}`;
+                  query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where userId=${worker_id}`;
                   let response = await request.query(query);
                   // console.log(response.recordset);
                   const TimeSheetId = await response.recordset[0].TimeSheetId
@@ -1291,7 +1293,7 @@ module.exports = {
 
                     // await request.query(query);
 
-                    query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where workersid=${worker_id}`;
+                    query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where userId=${worker_id}`;
                     let response = await request.query(query);
                     // console.log(response.recordset);
                     const TimeSheetId = await response.recordset[0].TimeSheetId
@@ -1326,7 +1328,7 @@ module.exports = {
 
                     // changed master table removed
 
-                    query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where workersid=${worker_id}`;
+                    query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where userId=${worker_id}`;
                     let response = await request.query(query);
                     // console.log(response.recordset);
                     const TimeSheetId = await response.recordset[0].TimeSheetId
@@ -1376,7 +1378,7 @@ module.exports = {
 
                   //   await request.query(query);
 
-                  query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where workersid=${worker_id}`;
+                  query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where userId=${worker_id}`;
                   let response = await request.query(query);
                   // console.log(response.recordset);
                   const TimeSheetId = await response.recordset[0].TimeSheetId
@@ -1411,7 +1413,7 @@ module.exports = {
 
                   //   await request.query(query);
 
-                  query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where workersid=${worker_id}`;
+                  query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where userId=${worker_id}`;
                   let response = await request.query(query);
                   // console.log(response.recordset);
                   const TimeSheetId = await response.recordset[0].TimeSheetId
@@ -1444,7 +1446,7 @@ module.exports = {
             // console.log("no start time Exists");
             // console.log(" No Record ! if ph 1 insert");
             if (photoTypeId === 1) {
-              query = `insert into TimesheetMaster(WorkersId,ProjectTypeId,CreateBy) values (
+              query = `insert into TimesheetMaster(userId,ProjectTypeId,CreateBy) values (
                 @workers_id,@projectTypeId,@createBy
             )`;
               request
@@ -1455,7 +1457,7 @@ module.exports = {
 
               await request.query(query);
 
-              query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where workersid=${worker_id}`;
+              query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where userId=${worker_id}`;
               let response = await request.query(query);
               // console.log(response.recordset);
               const TimeSheetId = await response.recordset[0].TimeSheetId
@@ -1489,7 +1491,7 @@ module.exports = {
       else {
         // console.log(" No Record ! if ph 1 insert else ")
         if (photoTypeId === 1) {
-          query = `insert into TimesheetMaster(WorkersId,ProjectTypeId,CreateBy) values (
+          query = `insert into TimesheetMaster(userId,ProjectTypeId,CreateBy) values (
             @workers_id,@projectTypeId,@createBy
         )`;
           request
@@ -1499,7 +1501,7 @@ module.exports = {
 
           await request.query(query);
 
-          query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where workersid=${workerid}`;
+          query = `select Max(TimeSheetID) as TimeSheetId from TimesheetMaster where userId=${workerid}`;
           let response = await request.query(query);
           // console.log("GET timesheetId", response.recordset);
           const TimeSheetId = await response.recordset[0].TimeSheetId
@@ -1541,7 +1543,7 @@ module.exports = {
       const request = model.db.request();
       const query = `SELECT * FROM TimeManagement tm
                       JOIN TimesheetMaster ts ON tm.TimeSheetID = ts.TimeSheetID
-                      WHERE ts.WorkersId = @workersid
+                      WHERE ts.userId = @workersid
                         AND CONVERT(DATE, tm.StartTime) = CONVERT(DATE, dateadd(hh,8,GETUTCDATE()))`;
 
       request.input('workersid', sql.Int, worker_id);
