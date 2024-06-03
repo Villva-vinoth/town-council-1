@@ -1,28 +1,8 @@
 const { generateToken } = require('../utils/jwt');
-const { createUser, getuserByLoginID } = require('./user.services');
+const {  getuserByLoginID } = require('./user.services');
 
 module.exports = {
-    register: (req, res) => {
-        const body = req.body;
-        createUser(body, (err, results) => {
-            if (err) {
-                return res.status(500).json({
-                    success: 0,
-                    message: "Internal Server Error"
-                })
-            }
-            if (results === 'already Exits') {
-                res.status(409).json({
-                    success: 0,
-                    message: "User already exists"
-                })
-            }
-            return res.status(200).json({
-                success: 1,
-                message: "Register successfull"
-            })
-        })
-    },
+
     login: (req, res) => {
         const body = req.body;
 
@@ -35,7 +15,7 @@ module.exports = {
                 })
             }
             if (result && result.length !== 0) {
-                const compare = (body.UserPassword === result.UserPassword ? true : false);
+                const compare = (body.UserPassword === result.Password ? true : false);
 
                 if (compare) {
                     const token = generateToken({ LoginName: body.LoginName });
@@ -46,7 +26,7 @@ module.exports = {
                         token: token,
                         user_id:result.Userid,
                         name : result.UserName,
-                        AdminID :result.AdminID,
+                        AdminID :result.Adminid,
                     })
                 }
                 else {
