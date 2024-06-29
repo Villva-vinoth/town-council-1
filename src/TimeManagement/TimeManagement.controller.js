@@ -69,7 +69,7 @@ module.exports = {
             else if (result == "Time issuse") {
                 return res.status(409).json({
                     success: 0,
-                    message: "Timing issuse"
+                    message: "Please verify the time"
                 })
             }
             else if (result == "Record exists") {
