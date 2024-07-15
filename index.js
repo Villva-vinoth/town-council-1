@@ -30,7 +30,7 @@ app.use('/img', imageRoute);
 app.use('/timemanagement',timeManagement)
 
 
-const port = 4002;
+const port = 4000;
 
 app.listen(port,()=>{
     console.log(`server is running on port ${port}`)
