@@ -17,3 +17,8 @@ const storage = multer.diskStorage({
   module.exports ={
     upload
   }
+
+
+  // database: 'prod-shatechnosolutions',
+    // user: 'shatechno-proddev', 
+    // password: 'gXM5KMeAx',
