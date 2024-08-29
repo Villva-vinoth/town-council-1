@@ -10,12 +10,12 @@ const config = {
     // password: 'gXM5KMeAx',
     database: 'dev.shatechno',
     user: 'dev.shatechno', 
-    password: '7!jYo787n',
+    password: '7!jYo787n7',
     options: {
-        trustedConnection: false,
-        enableArithAbort: true,
-        encrypt: false, 
-        trustServerCertificate: true,
+        trustedConnection: true,
+        enableArithAbort: false,
+        encrypt: true, 
+        trustServerCertificate: false,
 
     }
 }
